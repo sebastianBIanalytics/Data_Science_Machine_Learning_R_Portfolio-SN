@@ -1,0 +1,165 @@
+---
+title: "Predicting Mayoral election results in London"
+output:
+  html_document:
+    df_print: paged
+---
+
+xxx
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library (tidyverse)
+library (ggplot2)
+library (lm.beta)
+library(GGally)
+library(dplyr)
+library(plyr)
+library (tidyverse)
+library(Hmisc)
+library(effects)
+library(MASS)
+library(dplyr)
+library(kableExtra)
+library(pROC)
+library(reshape)
+```
+
+xxx
+
+```{r dataset, include=FALSE}
+
+Election <- read.csv("C:/@@ Default Folder Python Notebooks/Data/Election_London 2016 Features.csv")
+Election$Winner <- as.factor(Election$Winner)
+
+```
+
+```{r}
+Election$Winner <- revalue(Election$Winner, c("Sadiq Aman Khan"="1","Zac Goldsmith"="0"))
+```
+
+
+```{r}
+Election$Winner <- factor(Election$Winner, levels = c(0, 1), labels = c("Zac Goldsmith", "Sadiq Aman Khan"))
+```
+
+
+xxx
+
+```{r}
+# Explore the dependent variable
+
+table(Election$Winner)
+round(prop.table(table(Election$Winner)),2)
+
+```
+
+
+
+$\text{Engaged In Positive Praise} = b_0 + b_1Leaflet_i + b_2Positivity_i +  b_3Efficacy_i +\varepsilon_i$
+
+Equation (2): Binary logistic regression model equation. 
+
+
+$$\\[0.5cm]$$
+
+
+
+```{r, echo=FALSE}
+election_model <- glm(Winner ~ Sadiq.Aman.Khan 
+                      + Median.Age.2013 
+                      + In.employment..16.64..2011 
+                      + X..Households.Private.Rented.2011 
+                      + X..dwellings.CT.bands.F..G.or.H...2015 
+                      + Turnout.at.Mayoral.election.2012, 
+                      data = Election, 
+                      family = binomial(), na.action = na.fail)
+
+#summary(election_model)
+
+```
+
+```{r}
+
+# 1. run a null model 
+null_model <- glm(Winner ~ 1, data = Election, family = binomial(), na.action = na.fail) 
+
+# 2. check 
+#summary(null_model) 
+```
+
+```{r}
+# 3. calculate McFadden's R-square 
+R2 <- 1-logLik(election_model)/logLik(null_model) 
+
+# 4. print it 
+R2 
+```
+
+
+```{r}
+election_model %>% effects::allEffects() %>%  plot() 
+```
+
+```{r}
+jtools::effect_plot(election_model, pred = Median.Age.2013, interval = TRUE, 
+y.label = "Elected Mayor")
+```
+
+```{r}
+jtools::effect_plot(election_model, pred = Turnout.at.Mayoral.election.2012, interval = TRUE, 
+y.label = "Elected Mayor")
+```
+
+
+```{r}
+jtools::effect_plot(election_model, pred = X..Households.Private.Rented.2011, interval = TRUE, 
+y.label = "Elected Mayor")
+```
+
+#### Regression model. 
+
+```{r results = "asis"}
+stargazer::stargazer(election_model, type = "html", 
+title = "Table 1. Multiple Regression Model")
+```
+
+```{r}
+
+b <- coef(election_model) %>% exp()  %>%  as_tibble()
+b_ci <- suppressMessages(confint(election_model)) %>%  exp() %>%   as_tibble()
+OR <- b %>%  bind_cols(b_ci) 
+OR
+```
+
+
+
+```{r}
+kable(OR, booktabs = TRUE, digits = 3) %>% kable_styling(font_size = 14)
+
+```
+
+```{r}
+
+
+# Estimate the donation probability
+
+Election$Winner_prob <- predict(election_model, type = "response")
+# Find the donation probability of the average prospect
+Election$Winner_pred <- ifelse(Election$Winner_prob > 0.50, 1, 0)
+
+```
+
+xxxx  
+
+```{r}
+# Create a ROC curve
+ROC <- roc(Election$Winner, Election$Winner_prob)
+# Plot the ROC curve
+plot(ROC, col = "red")
+auc(ROC)
+```
+
+
+xxxx
