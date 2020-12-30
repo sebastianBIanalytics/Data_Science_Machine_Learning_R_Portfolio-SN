@@ -3,30 +3,44 @@ title: "Predicting Mayoral election results in London"
 output:
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
-xxx
+### Predicting the Mayor of London 2016 results using ward level demographics
+
+In this notebook Multiple Logistic regression, will be used to analyse the results of mayoral election in London 2016 at ward level. The dataset included as **outcome** the results of **Mayor of London election in 2016** and as features (predictors/independent variables) some selected socio-demographic predictors aggregated at ward level.  
+I previously used the demographic dataset in another Python projects using Jupyter notebooks: 
+
+**__[Predicting the median house price in London Wards](https://github.com/sebastianBIanalytics/Data_Science_Machine_Learning_Python/blob/master/Predicting%20median%20House%20Price%20London%20-%20Multiple%20Regression.ipynb)__**
+
+**__[Where in London to open a new Luxury Wine Bar](https://github.com/sebastianBIanalytics/Data_Science_Machine_Learning_Python/blob/master/WINE%20BAR%20in%20London%20Final.ipynb)__**
+
 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
 library (tidyverse)
 library (ggplot2)
-library (lm.beta)
-library(GGally)
 library(dplyr)
 library(plyr)
-library (tidyverse)
 library(Hmisc)
 library(effects)
 library(MASS)
-library(dplyr)
 library(kableExtra)
 library(pROC)
-library(reshape)
+library(fmsb)
+library(nlme)
+library(rms)
+
 ```
 
-xxx
+The original source of the predictors can be accessed at the link below:  
+** Ward Profiles and Atlas of Greater London Authority (GLA)** provided by **__[DataStore London](https://data.london.gov.uk/dataset/ward-profiles-and-atlas)__**. Although the provided details reflect London profile until 2015, this is the most comprehensive dataset publicly available that cover data from the 2011 Census, from ONS and governmental data. 
+
+The election results used the **__[London Elections Results 2016, Wards, Boroughs, Constituency]( https://data.london.gov.uk/download/london-elections-results-2016-wards-boroughs-constituency/01f4ff3a-c562-4d61-977f-c2dfb36694ce/gla-elections-votes-all-2016.xlsx)__**. However, only the voted per ward level were included while the postal votes (given at Borough level) were excluded. 
+
+
 
 ```{r dataset, include=FALSE}
 
@@ -37,12 +51,11 @@ Election$Winner <- as.factor(Election$Winner)
 
 ```{r}
 Election$Winner <- revalue(Election$Winner, c("Sadiq Aman Khan"="1","Zac Goldsmith"="0"))
+Election$Winner <- factor(Election$Winner, levels = c(0, 1), 
+                          labels = c("Zac Goldsmith", "Sadiq Aman Khan"))
+
 ```
 
-
-```{r}
-Election$Winner <- factor(Election$Winner, levels = c(0, 1), labels = c("Zac Goldsmith", "Sadiq Aman Khan"))
-```
 
 
 xxx
@@ -56,28 +69,46 @@ round(prop.table(table(Election$Winner)),2)
 ```
 
 
+```{r}
 
-$\text{Engaged In Positive Praise} = b_0 + b_1Leaflet_i + b_2Positivity_i +  b_3Efficacy_i +\varepsilon_i$
+```
+
+
+$logit(\text{Vote for S Khan}) = b_0 + b_1\text{Votes for Khan}_i + b_2\text{Median Age}_i +  b_3\text{% Employment 16-64}_i +  b_4\text{Council Tax Bands F/G/H}_i +  b_5\text{Vote Turnout 2012}_i + \varepsilon_i$
 
 Equation (2): Binary logistic regression model equation. 
 
 
 $$\\[0.5cm]$$
 
+```{r, echo=FALSE}
+model1 <- glm(Winner ~ Median.Age.2013 
+                      + In.employment..16.64..2011+ X..Households.Private.Rented.2011 , 
+                      data = Election, 
+                      family = binomial(), na.action = na.fail)
+
+#summary(model1)
+```
 
 
 ```{r, echo=FALSE}
-election_model <- glm(Winner ~ Sadiq.Aman.Khan 
-                      + Median.Age.2013 
+election_model <- glm(Winner ~ Median.Age.2013 
                       + In.employment..16.64..2011 
                       + X..Households.Private.Rented.2011 
                       + X..dwellings.CT.bands.F..G.or.H...2015 
-                      + Turnout.at.Mayoral.election.2012, 
+                      + Turnout.at.Mayoral.election.2012 + Sadiq.Aman.Khan, 
                       data = Election, 
                       family = binomial(), na.action = na.fail)
 
 #summary(election_model)
+```
 
+#### Regression model. 
+$$\\[0.1cm]$$
+```{r results = "asis"}
+stargazer::stargazer(model1, election_model, type = "html", 
+title = "Table 1. Multiple Logistic Regression Model", dep.var.labels = "Elected Mayor of London", 
+t.auto = FALSE, covariate.labels = c("Median Age 2013", "% In employment 16-64", "Households Private Rented", "Dwellings in CT.bands F/G/H", "Turnout at Mayoral Election 2012", "Sadiq Aman Khan", "Constant"))
 ```
 
 ```{r}
@@ -89,7 +120,20 @@ null_model <- glm(Winner ~ 1, data = Election, family = binomial(), na.action = 
 #summary(null_model) 
 ```
 
+
 ```{r}
+
+# 3. calculate McFadden's R-square 
+R2_m1 <- 1-logLik(model1)/logLik(null_model) 
+
+# 4. print it 
+R2_m1 
+```
+
+
+
+```{r}
+
 # 3. calculate McFadden's R-square 
 R2 <- 1-logLik(election_model)/logLik(null_model) 
 
@@ -99,49 +143,59 @@ R2
 
 
 ```{r}
-election_model %>% effects::allEffects() %>%  plot() 
-```
-
-```{r}
 jtools::effect_plot(election_model, pred = Median.Age.2013, interval = TRUE, 
-y.label = "Elected Mayor")
-```
-
-```{r}
-jtools::effect_plot(election_model, pred = Turnout.at.Mayoral.election.2012, interval = TRUE, 
-y.label = "Elected Mayor")
+y.label = "Elected Mayor", x.label = "Median Age in 2013")
 ```
 
 
 ```{r}
-jtools::effect_plot(election_model, pred = X..Households.Private.Rented.2011, interval = TRUE, 
-y.label = "Elected Mayor")
+jtools::effect_plot(election_model, pred = Turnout.at.Mayoral.election.2012, interval = TRUE, y.label = "Probability election of Sadiq Khan in 2016", x.label = "Turnout Mayoral election 2012")
 ```
 
-#### Regression model. 
-
-```{r results = "asis"}
-stargazer::stargazer(election_model, type = "html", 
-title = "Table 1. Multiple Regression Model")
-```
 
 ```{r}
+jtools::effect_plot(election_model, pred = X..Households.Private.Rented.2011, interval = TRUE, y.label = "Probability election of Sadiq Khan in 2016", x.label = "Households Private Rented 2011")
+```
 
+
+```{r}
 b <- coef(election_model) %>% exp()  %>%  as_tibble()
 b_ci <- suppressMessages(confint(election_model)) %>%  exp() %>%   as_tibble()
 OR <- b %>%  bind_cols(b_ci) 
-OR
+
 ```
+
 
 
 
 ```{r}
-kable(OR, booktabs = TRUE, digits = 3) %>% kable_styling(font_size = 14)
+OR1 <- OR %>% add_column("Labels" = c("Constant", "Median Age 2013", "% In employment 16-64", "Households Private Rented", "Dwellings in CT.bands F/G/H", "Turnout at Mayoral Election 2012", "Sadiq Aman Khan"), .before = "value")
+
+```
+
+
+```{r}
+kable(OR1, booktabs = TRUE, digits = 3) %>% kable_styling(font_size = 14)
 
 ```
 
 ```{r}
+OR <- data.frame(OR)
+```
 
+
+```{r}
+
+# Estimate the donation probability
+
+Election$Winner_prob1 <- predict(model1, type = "response")
+# Find the donation probability of the average prospect
+Election$Winner_pred1 <- ifelse(Election$Winner_prob1 > 0.50, 1, 0)
+
+```
+
+
+```{r}
 
 # Estimate the donation probability
 
@@ -155,11 +209,25 @@ xxxx
 
 ```{r}
 # Create a ROC curve
-ROC <- roc(Election$Winner, Election$Winner_prob)
+#ROC1 <- roc(Election$Winner, Election$Winner_prob1)
+#ROC <- roc(Election$Winner, Election$Winner_prob)
 # Plot the ROC curve
-plot(ROC, col = "red")
-auc(ROC)
+#plot(ROC1, col = "blue")
+#plot(ROC, col = "red")
+# Calculate the area under the curve (AUC)
+#auc(ROC1)
+#auc(ROC)
 ```
 
+
+```{r}
+summary(model1$fitted.values)
+summary(election_model$fitted.values)
+```
+
+
+```{r}
+
+```
 
 xxxx
