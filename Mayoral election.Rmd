@@ -57,9 +57,6 @@ Election$Winner <- factor(Election$Winner, levels = c(0, 1),
 ```
 
 
-
-xxx
-
 ```{r}
 # Explore the dependent variable
 
@@ -105,6 +102,7 @@ election_model <- glm(Winner ~ Median.Age.2013
 
 #### Regression model. 
 $$\\[0.1cm]$$
+
 ```{r results = "asis"}
 stargazer::stargazer(model1, election_model, type = "html", 
 title = "Table 1. Multiple Logistic Regression Model", dep.var.labels = "Elected Mayor of London", 
