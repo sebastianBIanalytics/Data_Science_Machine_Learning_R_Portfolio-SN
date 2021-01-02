@@ -57,6 +57,9 @@ Election$Winner <- factor(Election$Winner, levels = c(0, 1),
 ```
 
 
+
+xxx
+
 ```{r}
 # Explore the dependent variable
 
@@ -102,7 +105,6 @@ election_model <- glm(Winner ~ Median.Age.2013
 
 #### Regression model. 
 $$\\[0.1cm]$$
-
 ```{r results = "asis"}
 stargazer::stargazer(model1, election_model, type = "html", 
 title = "Table 1. Multiple Logistic Regression Model", dep.var.labels = "Elected Mayor of London", 
@@ -147,12 +149,28 @@ y.label = "Elected Mayor", x.label = "Median Age in 2013")
 
 
 ```{r}
-jtools::effect_plot(election_model, pred = Turnout.at.Mayoral.election.2012, interval = TRUE, y.label = "Probability election of Sadiq Khan in 2016", x.label = "Turnout Mayoral election 2012")
+jtools::effect_plot(election_model, pred = In.employment..16.64..2011, interval = TRUE, 
+y.label = "Elected Mayor", x.label = "% in Employment 16 - 64")
 ```
 
 
 ```{r}
+jtools::effect_plot(election_model, pred = Sadiq.Aman.Khan, interval = TRUE, 
+y.label = "Elected Mayor", x.label = "Votes for Sadiq Khan at ward level")
+```
+
+
+```{r}
+jtools::effect_plot(election_model, pred = Turnout.at.Mayoral.election.2012, interval = TRUE, y.label = "Probability election of Sadiq Khan in 2016", x.label = "Turnout Mayoral election 2012")
+```
+
+```{r}
 jtools::effect_plot(election_model, pred = X..Households.Private.Rented.2011, interval = TRUE, y.label = "Probability election of Sadiq Khan in 2016", x.label = "Households Private Rented 2011")
+```
+
+
+```{r}
+jtools::effect_plot(election_model, pred = X..dwellings.CT.bands.F..G.or.H...2015, interval = TRUE, y.label = "Probability election of Sadiq Khan in 2016", x.label = "Dwellings with Council tax in bands F, G or H 2015")
 ```
 
 
@@ -167,7 +185,9 @@ OR <- b %>%  bind_cols(b_ci)
 
 
 ```{r}
-OR1 <- OR %>% add_column("Labels" = c("Constant", "Median Age 2013", "% In employment 16-64", "Households Private Rented", "Dwellings in CT.bands F/G/H", "Turnout at Mayoral Election 2012", "Sadiq Aman Khan"), .before = "value")
+OR1 <- OR %>% add_column("Labels" = c("Constant", "Median Age 2013", "% In employment 16-64", 
+                                      "Households Private Rented", "Dwellings in CT.bands F/G/H", 
+                                      "Turnout at Mayoral Election 2012", "Sadiq Aman Khan"), .before = "value")
 
 ```
 
@@ -203,9 +223,9 @@ Election$Winner_pred <- ifelse(Election$Winner_prob > 0.50, 1, 0)
 
 ```
 
-xxxx  
+  
 
-```{r}
+```{r , include=FALSE}
 # Create a ROC curve
 #ROC1 <- roc(Election$Winner, Election$Winner_prob1)
 #ROC <- roc(Election$Winner, Election$Winner_prob)
@@ -218,7 +238,7 @@ xxxx
 ```
 
 
-```{r}
+```{r, include=FALSE}
 summary(model1$fitted.values)
 summary(election_model$fitted.values)
 ```
@@ -228,4 +248,28 @@ summary(election_model$fitted.values)
 
 ```
 
-xxxx
+
+```{r, echo=FALSE}
+
+CorelMatrixDataset <- subset(Election, select = -c(ID, Borough, Ward, Constituency, Winner_prob1, Winner_pred1, Winner_prob, Winner_pred))
+
+library(corrgram)
+corrgram(CorelMatrixDataset, order=NULL, lower.panel=panel.shade,
+  upper.panel=NULL, text.panel=panel.txt,
+  main="Correlation matrix")
+
+
+
+```
+
+
+```{r}
+# Execute the following command
+p1 <- ggplot(Election, aes(Turnout, Sadiq.Aman.Khan)) +
+  geom_point()
+p1
+
+p2 <- ggplot(Election, aes(Turnout, Sadiq.Aman.Khan, color = Borough)) +
+  geom_point()
+p2
+```
