@@ -4,4 +4,5 @@
 
 2. Interactive Leaflet Map of a selected sample of 1300 crimes, represenmted through their geo location (latitude, longitude). 
 
+3. Using GOT package for creating plots.  
 
