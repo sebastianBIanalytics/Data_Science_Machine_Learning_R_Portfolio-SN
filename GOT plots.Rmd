@@ -1,0 +1,150 @@
+
+---
+title: "Using Game Of Thrones Pallette in ggplot2 to perform area plots"
+output:
+  html_document:
+    df_print: paged
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. 
+It is part of the personal portfolio of **__[Sebastian N:](https://github.com/sebastianBIanalytics?tab=repositories)__**
+
+This script simply exemplifies how I used different color schemes of the **Game of Thrones** R package developed by Alejandro Jiménez. Although simple this script intends to show how these lovely colour schemes can be used in practice. 
+
+Access below link for 
+
+**__[Full details of the package](https://github.com/aljrico/gameofthrones)__**
+
+
+```{r}
+library (ggplot2)
+library(gameofthrones)
+library(RColorBrewer)
+library(scales)
+library(hexbin)
+```
+
+$$\\[0.2cm]$$
+
+### Theme Lannister
+$$\\[0.2cm]$$
+```{r}
+# Stacked density plot:
+
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Lannister")
+p
+```
+
+$$\\[0.2cm]$$
+
+
+### Theme Daenerys
+
+$$\\[0.2cm]$$
+
+```{r}
+# Stacked density plot:
+
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Daenerys")
+p
+```
+$$\\[0.2cm]$$
+
+
+### Theme Stark 
+
+$$\\[0.2cm]$$
+
+```{r}
+# Stacked density plot:
+
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Stark")
+p
+```
+$$\\[0.2cm]$$
+
+
+### Theme Targaryen 
+$$\\[0.2cm]$$
+```{r}
+# Stacked density plot:
+
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "targaryen")
+p
+```
+$$\\[0.2cm]$$
+
+
+### Theme Tyrell 
+
+$$\\[0.2cm]$$
+
+```{r}
+# Stacked density plot:
+
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "tyrell")
+p
+```
+
+$$\\[0.2cm]$$
+
+
+### Theme Martell 
+
+$$\\[0.2cm]$$
+```{r}
+# Stacked density plot:
+
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Martell")
+p
+```
+$$\\[0.2cm]$$
+
+
+### Theme Wildfire
+
+$$\\[0.2cm]$$
+
+```{r}
+# Stacked density plot:
+
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Wildfire")
+p
+```
+
+$$\\[0.2cm]$$
+
+
+### Theme Margaery
+
+$$\\[0.2cm]$$
+
+```{r}
+# Stacked density plot:
+
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Margaery")
+p
+```
+
+$$\\[0.2cm]$$
+
+
+### Theme Arya
+
+$$\\[0.2cm]$$
+```{r}
+# Stacked density plot:
+
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Arya")
+p
+```
+
