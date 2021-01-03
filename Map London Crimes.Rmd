@@ -1,0 +1,64 @@
+---
+title: "Mapping Crimes using Leaflet package in R"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+### Representing Crimes using Leaflet package in R 
+
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. 
+It is part of the personal portfolio of **__[Sebastian N:](https://github.com/sebastianBIanalytics?tab=repositories)__**
+
+This is version 1 of this notebook and I will update it as soon as possible with more technical details. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(devtools)
+library(leaflet)
+library(rgdal)
+library(rgeos)
+library(tmap)
+library("sp")
+library(raster)
+library(dismo)
+library(RColorBrewer)
+library(haven)
+```
+
+### Code from Interactive Maps  in Leaflet in R
+
+
+```{r}
+Crime <- read_sav("C:/@@ Default Folder Python Notebooks/Data/1300 cases.sav")
+head(Crime)
+```
+
+
+```{r}
+map_crimes <- leaflet() %>% addProviderTiles("CartoDB") %>%
+  addMarkers(lng = Crime$Longitude, lat = Crime$Latitude) %>% addProviderTiles("OpenStreetMap.Mapnik") 
+
+map_crimes
+```
+
+
+```{r}
+British_Museum <- leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lng = -0.126168, lat = 51.518757,  popup="British Museum") 
+
+British_Museum
+
+```
+
+```{r}
+# Data will be further explored 
+
+round(prop.table(table(Crime$Crimetype)),2)
+```
+
+
