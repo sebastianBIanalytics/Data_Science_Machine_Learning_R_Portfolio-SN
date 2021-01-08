@@ -27,6 +27,11 @@ library(ggthemes)
 ```
 
 $$\\[0.2cm]$$
+```{r}
+diamonds
+```
+
+
 
 ### Theme Lannister
 $$\\[0.2cm]$$
@@ -39,7 +44,13 @@ p
 ```
 
 $$\\[0.2cm]$$
+```{r}
+# Stacked density plot:
 
+p <- ggplot(data=diamonds, aes(x=price, group=clarity, fill=clarity)) + theme_economist()+
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Lannister")
+p
+```
 
 ### Theme Daenerys
 
@@ -140,6 +151,14 @@ p
 ```
 
 $$\\[0.2cm]$$
+
+```{r}
+# Stacked density plot:
+
+p <- ggplot(data=diamonds, aes(x=price, group=color, fill=color)) + theme_economist()+
+    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Margaery")
+p
+```
 
 
 ### Theme Arya
