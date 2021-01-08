@@ -2,6 +2,7 @@
 ---
 title: "Using Game Of Thrones Pallette in ggplot2 to perform area plots"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 ---
@@ -22,6 +23,7 @@ library(gameofthrones)
 library(RColorBrewer)
 library(scales)
 library(hexbin)
+library(ggthemes)
 ```
 
 $$\\[0.2cm]$$
@@ -31,7 +33,7 @@ $$\\[0.2cm]$$
 ```{r}
 # Stacked density plot:
 
-p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) + theme_economist()+
     geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Lannister")
 p
 ```
@@ -46,7 +48,7 @@ $$\\[0.2cm]$$
 ```{r}
 # Stacked density plot:
 
-p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut))  + theme_economist()+
     geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Daenerys")
 p
 ```
@@ -60,7 +62,7 @@ $$\\[0.2cm]$$
 ```{r}
 # Stacked density plot:
 
-p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut))  + theme_economist()+
     geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Stark")
 p
 ```
@@ -72,7 +74,7 @@ $$\\[0.2cm]$$
 ```{r}
 # Stacked density plot:
 
-p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) + theme_economist()+
     geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "targaryen")
 p
 ```
@@ -86,8 +88,9 @@ $$\\[0.2cm]$$
 ```{r}
 # Stacked density plot:
 
-p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
-    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "tyrell")
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) + theme_economist()+
+    geom_density(adjust=1.5, position="fill") +  
+    scale_fill_got(discrete = TRUE, option = "tyrell")
 p
 ```
 
@@ -100,7 +103,7 @@ $$\\[0.2cm]$$
 ```{r}
 # Stacked density plot:
 
-p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut))  + theme_economist()+
     geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Martell")
 p
 ```
@@ -114,8 +117,10 @@ $$\\[0.2cm]$$
 ```{r}
 # Stacked density plot:
 
-p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
-    geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Wildfire")
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) + theme_economist()+
+    geom_density(adjust=1.5, position="fill") +  
+    scale_fill_got(discrete = TRUE, option = "Wildfire") 
+                              
 p
 ```
 
@@ -129,7 +134,7 @@ $$\\[0.2cm]$$
 ```{r}
 # Stacked density plot:
 
-p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) + theme_economist()+
     geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Margaery")
 p
 ```
@@ -143,7 +148,7 @@ $$\\[0.2cm]$$
 ```{r}
 # Stacked density plot:
 
-p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) +
+p <- ggplot(data=diamonds, aes(x=price, group=cut, fill=cut)) + theme_economist()+
     geom_density(adjust=1.5, position="fill") +  scale_fill_got(discrete = TRUE, option = "Arya")
 p
 ```
